@@ -7,6 +7,7 @@
 
 - (void)useBasicAuth:(CDVInvokedUrlCommand*)command;
 - (void)setHeader:(CDVInvokedUrlCommand*)command;
+- (void)setTimeouts:(CDVInvokedUrlCommand*)command;
 - (void)enableSSLPinning:(CDVInvokedUrlCommand*)command;
 - (void)acceptAllCerts:(CDVInvokedUrlCommand*)command;
 - (void)post:(CDVInvokedUrlCommand*)command;
@@ -14,5 +15,7 @@
 - (void)put:(CDVInvokedUrlCommand*)command;
 - (void)uploadFile:(CDVInvokedUrlCommand*)command;
 - (void)downloadFile:(CDVInvokedUrlCommand*)command;
+
+@property (readwrite, nonatomic) NSTimeInterval timeoutInterval;
 
 @end

@@ -48,6 +48,17 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)setTimeouts:(CDVInvokedUrlCommand*)command {
+    HttpManager *manager = [HttpManager sharedClient];
+
+    self.timeoutInterval = [[command.arguments objectAtIndex:0] doubleValue];
+
+    NSLog(@"Connection timeout = %f", self.timeoutInterval);
+
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void)enableSSLPinning:(CDVInvokedUrlCommand*)command {
     bool enable = [[command.arguments objectAtIndex:0] boolValue];
     if (enable) {
@@ -79,7 +90,10 @@
    [self setRequestHeaders: headers];
    
    CordovaHttpPlugin* __weak weakSelf = self;
+
+   manager.requestSerializer.timeoutInterval = self.timeoutInterval;
    manager.responseSerializer = [TextResponseSerializer serializer];
+
    [manager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithInt:operation.response.statusCode] forKey:@"status"];
@@ -104,7 +118,9 @@
    
    CordovaHttpPlugin* __weak weakSelf = self;
    
+   manager.requestSerializer.timeoutInterval = self.timeoutInterval;
    manager.responseSerializer = [TextResponseSerializer serializer];
+
    [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithInt:operation.response.statusCode] forKey:@"status"];
@@ -129,7 +145,9 @@
    
    CordovaHttpPlugin* __weak weakSelf = self;
    
+   manager.requestSerializer.timeoutInterval = self.timeoutInterval;
    manager.responseSerializer = [TextResponseSerializer serializer];
+
    [manager PUT:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithInt:operation.response.statusCode] forKey:@"status"];
