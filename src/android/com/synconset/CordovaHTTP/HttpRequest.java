@@ -302,7 +302,8 @@ public class HttpRequest {
         }
       } };
       try {
-        SSLContext context = SSLContext.getInstance("TLS");
+        SSLContext context = SSLContext.getDefault();
+        context.setEnabledProtocols(context.getSupportedProtocols());
         context.init(null, trustAllCerts, new SecureRandom());
         TRUSTED_FACTORY = context.getSocketFactory();
       } catch (GeneralSecurityException e) {
@@ -426,7 +427,8 @@ public class HttpRequest {
       tmf.init(keyStore);
       
       // Create an SSLContext that uses our TrustManager
-      SSLContext sslContext = SSLContext.getInstance("TLS");
+      SSLContext sslContext = SSLContext.getDefault();
+      sslContext.setEnabledProtocols(sslContext.getSupportedProtocols());
       sslContext.init(null, tmf.getTrustManagers(), null);
       PINNED_FACTORY = sslContext.getSocketFactory();
   }
@@ -3305,5 +3307,60 @@ public class HttpRequest {
   public HttpRequest followRedirects(final boolean followRedirects) {
     getConnection().setInstanceFollowRedirects(followRedirects);
     return this;
+  }
+
+  public static class PermissiveSSLSocketFactory extends SSLSocketFactory {
+    private final SSLSocketFactory m_parentFactory;
+
+    public PermissiveSSLSocketFactory(final SSLSocketFactory parentFactory) {
+      m_parentFactory = parentFactory;
+    }
+
+    @Override
+    public String[] getSupportedCipherSuites() {
+      return m_parentFactory.getSupportedCipherSuites();
+    }
+
+    /* We enable all supported suites by default. */
+    @Override
+    public String[] getDefaultCipherSuites() {
+      return getSupportedCipherSuites();
+    }
+
+    private Socket enableEverythingOn(final Socket s) {
+      if (s instanceof SSLSocket) {
+        final SSLSocket sslSock = (SSLSocket) s;
+        sslSock.setEnabledCipherSuites(sslSock.getSupportedCipherSuites());
+        sslSock.setEnabledProtocols(sslSock.getSupportedProtocols());
+        return sslSock;
+      }
+      return s;
+    }
+
+    @Override
+    public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+      return enableEverythingOn(m_parentFactory.createSocket(s, host, port, autoClose));
+    }
+
+    @Override
+    public Socket createSocket(final String host, final int port) throws IOException, UnknownHostException {
+      return enableEverythingOn(m_parentFactory.createSocket(host, port));
+    }
+
+    @Override
+    public Socket createSocket(final InetAddress host, final int port) throws IOException {
+      return enableEverythingOn(m_parentFactory.createSocket(host, port));
+    }
+
+    @Override
+    public Socket createSocket(final String host, final int port, final InetAddress localhost, final int localport) throws IOException, UnknownHostException {
+      return enableEverythingOn(m_parentFactory.createSocket(host, port, localhost, localport));
+    }
+
+    @Override
+    public Socket createSocket(final InetAddress host, final int port, final InetAddress localhost, final int localport) throws IOException {
+      return enableEverythingOn(m_parentFactory.createSocket(host, port, localhost, localport));
+    }
+
   }
 }

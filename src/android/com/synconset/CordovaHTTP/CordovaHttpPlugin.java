@@ -35,6 +35,8 @@ import android.content.res.AssetManager;
 import android.util.Base64;
 import android.util.Log;
 
+import com.google.android.gms.security.ProviderInstaller;
+
 import com.github.kevinsawicki.http.HttpRequest;
 
 public class CordovaHttpPlugin extends CordovaPlugin {
@@ -46,6 +48,12 @@ public class CordovaHttpPlugin extends CordovaPlugin {
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         this.globalHeaders = new HashMap<String, String>();
+        try {
+            ProviderInstaller.installIfNeeded(cordova.getActivity().getApplicationContext());
+        } catch (final Exception e) {
+            System.err.println("Failed to install Google Play provider into application context.");
+            e.printStackTrace();
+        }
     }
 
     @Override
