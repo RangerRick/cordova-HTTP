@@ -256,8 +256,7 @@ public class HttpRequest {
 
   private static final String BOUNDARY = "00content0boundary00";
 
-  private static final String CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary="
-      + BOUNDARY;
+  private static final String CONTENT_TYPE_MULTIPART = "multipart/form-data; boundary=" + BOUNDARY;
 
   private static final String CRLF = "\r\n";
 
@@ -308,8 +307,7 @@ public class HttpRequest {
         context.init(null, trustAllCerts, new SecureRandom());
         TRUSTED_FACTORY = new PermissiveSSLSocketFactory(context.getSocketFactory());
       } catch (GeneralSecurityException e) {
-        IOException ioException = new IOException(
-            "Security exception configuring SSL context");
+        IOException ioException = new IOException("Security exception configuring SSL context");
         ioException.initCause(e);
         throw new HttpRequestException(ioException);
       }
@@ -319,37 +317,38 @@ public class HttpRequest {
   }
 
   private static HostnameVerifier getTrustedVerifier() {
-    if (TRUSTED_VERIFIER == null)
+    if (TRUSTED_VERIFIER == null) {
       TRUSTED_VERIFIER = new HostnameVerifier() {
 
         public boolean verify(String hostname, SSLSession session) {
           return true;
         }
       };
+    }
 
     return TRUSTED_VERIFIER;
   }
 
-  private static StringBuilder addPathSeparator(final String baseUrl,
-      final StringBuilder result) {
+  private static StringBuilder addPathSeparator(final String baseUrl, final StringBuilder result) {
     // Add trailing slash if the base URL doesn't have any path segments.
     //
     // The following test is checking for the last slash not being part of
     // the protocol to host separator: '://'.
-    if (baseUrl.indexOf(':') + 2 == baseUrl.lastIndexOf('/'))
+    if (baseUrl.indexOf(':') + 2 == baseUrl.lastIndexOf('/')) {
       result.append('/');
+    }
     return result;
   }
 
-  private static StringBuilder addParamPrefix(final String baseUrl,
-      final StringBuilder result) {
+  private static StringBuilder addParamPrefix(final String baseUrl, final StringBuilder result) {
     // Add '?' if missing and add '&' if params already exist in base url
     final int queryStart = baseUrl.indexOf('?');
     final int lastChar = result.length() - 1;
-    if (queryStart == -1)
+    if (queryStart == -1) {
       result.append('?');
-    else if (queryStart < lastChar && baseUrl.charAt(lastChar) != '&')
+    } else if (queryStart < lastChar && baseUrl.charAt(lastChar) != '&') {
       result.append('&');
+    }
     return result;
   }
 
@@ -394,10 +393,11 @@ public class HttpRequest {
    * Specify the {@link ConnectionFactory} used to create new requests.
    */
   public static void setConnectionFactory(final ConnectionFactory connectionFactory) {
-    if (connectionFactory == null)
+    if (connectionFactory == null) {
       CONNECTION_FACTORY = ConnectionFactory.DEFAULT;
-    else
+    } else {
       CONNECTION_FACTORY = connectionFactory;
+    }
   }
 
 
@@ -657,22 +657,21 @@ public class HttpRequest {
      */
     public static byte[] encodeBytesToBytes(byte[] source, int off, int len) {
 
-      if (source == null)
+      if (source == null) {
         throw new NullPointerException("Cannot serialize a null array.");
+      }
 
-      if (off < 0)
-        throw new IllegalArgumentException("Cannot have negative offset: "
-            + off);
+      if (off < 0) {
+        throw new IllegalArgumentException("Cannot have negative offset: " + off);
+      }
 
-      if (len < 0)
+      if (len < 0) {
         throw new IllegalArgumentException("Cannot have length offset: " + len);
+      }
 
-      if (off + len > source.length)
-        throw new IllegalArgumentException(
-            String
-                .format(
-                    "Cannot have offset of %d and length of %d with array of length %d",
-                    off, len, source.length));
+      if (off + len > source.length) {
+        throw new IllegalArgumentException(String.format("Cannot have offset of %d and length of %d with array of length %d", off, len, source.length));
+      }
 
       // Bytes needed for actual encoding
       int encLen = (len / 3) * 4 + (len % 3 > 0 ? 4 : 0);
@@ -682,8 +681,9 @@ public class HttpRequest {
       int d = 0;
       int e = 0;
       int len2 = len - 2;
-      for (; d < len2; d += 3, e += 4)
+      for (; d < len2; d += 3, e += 4) {
         encode3to4(source, d + off, 3, outBuff, e);
+      }
 
       if (d < len) {
         encode3to4(source, d + off, len - d, outBuff, e);
@@ -764,8 +764,9 @@ public class HttpRequest {
         try {
           done();
         } catch (IOException e) {
-          if (!thrown)
+          if (!thrown) {
             throw new HttpRequestException(e);
+          }
         }
       }
     }
@@ -789,24 +790,25 @@ public class HttpRequest {
      * @param closeable
      * @param ignoreCloseExceptions
      */
-    protected CloseOperation(final Closeable closeable,
-        final boolean ignoreCloseExceptions) {
+    protected CloseOperation(final Closeable closeable, final boolean ignoreCloseExceptions) {
       this.closeable = closeable;
       this.ignoreCloseExceptions = ignoreCloseExceptions;
     }
 
     @Override
     protected void done() throws IOException {
-      if (closeable instanceof Flushable)
+      if (closeable instanceof Flushable) {
         ((Flushable) closeable).flush();
-      if (ignoreCloseExceptions)
+      }
+      if (ignoreCloseExceptions) {
         try {
           closeable.close();
         } catch (IOException e) {
           // Ignored
         }
-      else
+      } else {
         closeable.close();
+      }
     }
   }
 
@@ -885,8 +887,7 @@ public class HttpRequest {
    * @return encoded URL
    * @throws HttpRequestException
    */
-  public static String encode(final CharSequence url)
-      throws HttpRequestException {
+  public static String encode(final CharSequence url) throws HttpRequestException {
     URL parsed;
     try {
       parsed = new URL(url.toString());
@@ -896,16 +897,16 @@ public class HttpRequest {
 
     String host = parsed.getHost();
     int port = parsed.getPort();
-    if (port != -1)
+    if (port != -1) {
       host = host + ':' + Integer.toString(port);
+    }
 
     try {
-      String encoded = new URI(parsed.getProtocol(), host, parsed.getPath(),
-          parsed.getQuery(), null).toASCIIString();
+      String encoded = new URI(parsed.getProtocol(), host, parsed.getPath(), parsed.getQuery(), null).toASCIIString();
       int paramsStart = encoded.indexOf('?');
-      if (paramsStart > 0 && paramsStart + 1 < encoded.length())
-        encoded = encoded.substring(0, paramsStart + 1)
-                  + encoded.substring(paramsStart + 1).replace("+", "%2B");
+      if (paramsStart > 0 && paramsStart + 1 < encoded.length()) {
+        encoded = encoded.substring(0, paramsStart + 1) + encoded.substring(paramsStart + 1).replace("+", "%2B");
+      }
       return encoded;
     } catch (URISyntaxException e) {
       IOException io = new IOException("Parsing URI failed");
@@ -926,8 +927,9 @@ public class HttpRequest {
    */
   public static String append(final CharSequence url, final Map<?, ?> params) {
     final String baseUrl = url.toString();
-    if (params == null || params.isEmpty())
+    if (params == null || params.isEmpty()) {
       return baseUrl;
+    }
 
     final StringBuilder result = new StringBuilder(baseUrl);
 
@@ -941,8 +943,9 @@ public class HttpRequest {
     result.append(entry.getKey().toString());
     result.append('=');
     value = entry.getValue();
-    if (value != null)
+    if (value != null) {
       result.append(value);
+    }
 
     while (iterator.hasNext()) {
       result.append('&');
@@ -950,8 +953,9 @@ public class HttpRequest {
       result.append(entry.getKey().toString());
       result.append('=');
       value = entry.getValue();
-      if (value != null)
+      if (value != null) {
         result.append(value);
+      }
     }
 
     return result.toString();
@@ -970,12 +974,13 @@ public class HttpRequest {
    */
   public static String append(final CharSequence url, final Object... params) {
     final String baseUrl = url.toString();
-    if (params == null || params.length == 0)
+    if (params == null || params.length == 0) {
       return baseUrl;
+    }
 
-    if (params.length % 2 != 0)
-      throw new IllegalArgumentException(
-          "Must specify an even number of parameter names/values");
+    if (params.length % 2 != 0) {
+      throw new IllegalArgumentException("Must specify an even number of parameter names/values");
+    }
 
     final StringBuilder result = new StringBuilder(baseUrl);
 
@@ -986,16 +991,18 @@ public class HttpRequest {
     result.append(params[0]);
     result.append('=');
     value = params[1];
-    if (value != null)
+    if (value != null) {
       result.append(value);
+    }
 
     for (int i = 2; i < params.length; i += 2) {
       result.append('&');
       result.append(params[i]);
       result.append('=');
       value = params[i + 1];
-      if (value != null)
+      if (value != null) {
         result.append(value);
+      }
     }
 
     return result.toString();
@@ -1008,8 +1015,7 @@ public class HttpRequest {
    * @return request
    * @throws HttpRequestException
    */
-  public static HttpRequest get(final CharSequence url)
-      throws HttpRequestException {
+  public static HttpRequest get(final CharSequence url) throws HttpRequestException {
     return new HttpRequest(url, METHOD_GET);
   }
 
@@ -1038,8 +1044,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest get(final CharSequence baseUrl,
-      final Map<?, ?> params, final boolean encode) {
+  public static HttpRequest get(final CharSequence baseUrl, final Map<?, ?> params, final boolean encode) {
     String url = append(baseUrl, params);
     return get(encode ? encode(url) : url);
   }
@@ -1059,8 +1064,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest get(final CharSequence baseUrl,
-      final boolean encode, final Object... params) {
+  public static HttpRequest get(final CharSequence baseUrl, final boolean encode, final Object... params) {
     String url = append(baseUrl, params);
     return get(encode ? encode(url) : url);
   }
@@ -1072,8 +1076,7 @@ public class HttpRequest {
    * @return request
    * @throws HttpRequestException
    */
-  public static HttpRequest post(final CharSequence url)
-      throws HttpRequestException {
+  public static HttpRequest post(final CharSequence url) throws HttpRequestException {
     return new HttpRequest(url, METHOD_POST);
   }
 
@@ -1102,8 +1105,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest post(final CharSequence baseUrl,
-      final Map<?, ?> params, final boolean encode) {
+  public static HttpRequest post(final CharSequence baseUrl, final Map<?, ?> params, final boolean encode) {
     String url = append(baseUrl, params);
     return post(encode ? encode(url) : url);
   }
@@ -1123,8 +1125,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest post(final CharSequence baseUrl,
-      final boolean encode, final Object... params) {
+  public static HttpRequest post(final CharSequence baseUrl, final boolean encode, final Object... params) {
     String url = append(baseUrl, params);
     return post(encode ? encode(url) : url);
   }
@@ -1136,8 +1137,7 @@ public class HttpRequest {
    * @return request
    * @throws HttpRequestException
    */
-  public static HttpRequest put(final CharSequence url)
-      throws HttpRequestException {
+  public static HttpRequest put(final CharSequence url) throws HttpRequestException {
     return new HttpRequest(url, METHOD_PUT);
   }
 
@@ -1166,8 +1166,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest put(final CharSequence baseUrl,
-      final Map<?, ?> params, final boolean encode) {
+  public static HttpRequest put(final CharSequence baseUrl, final Map<?, ?> params, final boolean encode) {
     String url = append(baseUrl, params);
     return put(encode ? encode(url) : url);
   }
@@ -1187,8 +1186,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest put(final CharSequence baseUrl,
-      final boolean encode, final Object... params) {
+  public static HttpRequest put(final CharSequence baseUrl, final boolean encode, final Object... params) {
     String url = append(baseUrl, params);
     return put(encode ? encode(url) : url);
   }
@@ -1200,8 +1198,7 @@ public class HttpRequest {
    * @return request
    * @throws HttpRequestException
    */
-  public static HttpRequest delete(final CharSequence url)
-      throws HttpRequestException {
+  public static HttpRequest delete(final CharSequence url) throws HttpRequestException {
     return new HttpRequest(url, METHOD_DELETE);
   }
 
@@ -1230,8 +1227,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest delete(final CharSequence baseUrl,
-      final Map<?, ?> params, final boolean encode) {
+  public static HttpRequest delete(final CharSequence baseUrl, final Map<?, ?> params, final boolean encode) {
     String url = append(baseUrl, params);
     return delete(encode ? encode(url) : url);
   }
@@ -1251,8 +1247,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest delete(final CharSequence baseUrl,
-      final boolean encode, final Object... params) {
+  public static HttpRequest delete(final CharSequence baseUrl, final boolean encode, final Object... params) {
     String url = append(baseUrl, params);
     return delete(encode ? encode(url) : url);
   }
@@ -1264,8 +1259,7 @@ public class HttpRequest {
    * @return request
    * @throws HttpRequestException
    */
-  public static HttpRequest head(final CharSequence url)
-      throws HttpRequestException {
+  public static HttpRequest head(final CharSequence url) throws HttpRequestException {
     return new HttpRequest(url, METHOD_HEAD);
   }
 
@@ -1294,8 +1288,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest head(final CharSequence baseUrl,
-      final Map<?, ?> params, final boolean encode) {
+  public static HttpRequest head(final CharSequence baseUrl, final Map<?, ?> params, final boolean encode) {
     String url = append(baseUrl, params);
     return head(encode ? encode(url) : url);
   }
@@ -1315,8 +1308,7 @@ public class HttpRequest {
    *
    * @return request
    */
-  public static HttpRequest head(final CharSequence baseUrl,
-      final boolean encode, final Object... params) {
+  public static HttpRequest head(final CharSequence baseUrl, final boolean encode, final Object... params) {
     String url = append(baseUrl, params);
     return head(encode ? encode(url) : url);
   }
@@ -1328,8 +1320,7 @@ public class HttpRequest {
    * @return request
    * @throws HttpRequestException
    */
-  public static HttpRequest options(final CharSequence url)
-      throws HttpRequestException {
+  public static HttpRequest options(final CharSequence url) throws HttpRequestException {
     return new HttpRequest(url, METHOD_OPTIONS);
   }
 
@@ -1351,8 +1342,7 @@ public class HttpRequest {
    * @return request
    * @throws HttpRequestException
    */
-  public static HttpRequest trace(final CharSequence url)
-      throws HttpRequestException {
+  public static HttpRequest trace(final CharSequence url) throws HttpRequestException {
     return new HttpRequest(url, METHOD_TRACE);
   }
 
@@ -1429,12 +1419,14 @@ public class HttpRequest {
     if (hosts != null && hosts.length > 0) {
       StringBuilder separated = new StringBuilder();
       int last = hosts.length - 1;
-      for (int i = 0; i < last; i++)
+      for (int i = 0; i < last; i++) {
         separated.append(hosts[i]).append('|');
+      }
       separated.append(hosts[last]);
       setProperty("http.nonProxyHosts", separated.toString());
-    } else
+    } else {
       setProperty("http.nonProxyHosts", null);
+    }
   }
 
   /**
@@ -1448,20 +1440,21 @@ public class HttpRequest {
    */
   private static String setProperty(final String name, final String value) {
     final PrivilegedAction<String> action;
-    if (value != null)
+    if (value != null) {
       action = new PrivilegedAction<String>() {
 
         public String run() {
           return System.setProperty(name, value);
         }
       };
-    else
+    } else {
       action = new PrivilegedAction<String>() {
 
         public String run() {
           return System.clearProperty(name);
         }
       };
+    }
     return AccessController.doPrivileged(action);
   }
 
@@ -1500,8 +1493,7 @@ public class HttpRequest {
    * @param method HTTP request method (e.g., "GET", "POST").
    * @throws HttpRequestException
    */
-  public HttpRequest(final CharSequence url, final String method)
-      throws HttpRequestException {
+  public HttpRequest(final CharSequence url, final String method) throws HttpRequestException {
     try {
       this.url = new URL(url.toString());
     } catch (MalformedURLException e) {
@@ -1517,8 +1509,7 @@ public class HttpRequest {
    * @param method HTTP request method (e.g., "GET", "POST").
    * @throws HttpRequestException
    */
-  public HttpRequest(final URL url, final String method)
-      throws HttpRequestException {
+  public HttpRequest(final URL url, final String method) throws HttpRequestException {
     this.url = url;
     this.requestMethod = method;
   }
@@ -1530,10 +1521,11 @@ public class HttpRequest {
   private HttpURLConnection createConnection() {
     try {
       final HttpURLConnection connection;
-      if (httpProxyHost != null)
+      if (httpProxyHost != null) {
         connection = CONNECTION_FACTORY.create(url, createProxy());
-      else
+      } else {
         connection = CONNECTION_FACTORY.create(url);
+      }
       connection.setRequestMethod(requestMethod);
       return connection;
     } catch (IOException e) {
@@ -1552,8 +1544,9 @@ public class HttpRequest {
    * @return connection
    */
   public HttpURLConnection getConnection() {
-    if (connection == null)
+    if (connection == null) {
       connection = createConnection();
+    }
     return connection;
   }
 
@@ -1604,8 +1597,7 @@ public class HttpRequest {
    * @return this request
    * @throws HttpRequestException
    */
-  public HttpRequest code(final AtomicInteger output)
-      throws HttpRequestException {
+  public HttpRequest code(final AtomicInteger output) throws HttpRequestException {
     output.set(code());
     return this;
   }
@@ -1728,8 +1720,9 @@ public class HttpRequest {
    * @return this request
    */
   public HttpRequest bufferSize(final int size) {
-    if (size < 1)
+    if (size < 1) {
       throw new IllegalArgumentException("Size must be greater than zero");
+    }
     bufferSize = size;
     return this;
   }
@@ -1775,10 +1768,11 @@ public class HttpRequest {
    */
   protected ByteArrayOutputStream byteStream() {
     final int size = contentLength();
-    if (size > 0)
+    if (size > 0) {
       return new ByteArrayOutputStream(size);
-    else
+    } else {
       return new ByteArrayOutputStream();
+    }
   }
 
   /**
@@ -1885,15 +1879,15 @@ public class HttpRequest {
    */
   public InputStream stream() throws HttpRequestException {
     InputStream stream;
-    if (code() < HTTP_BAD_REQUEST)
+    if (code() < HTTP_BAD_REQUEST) {
       try {
         stream = getConnection().getInputStream();
       } catch (IOException e) {
         throw new HttpRequestException(e);
       }
-    else {
+    } else {
       stream = getConnection().getErrorStream();
-      if (stream == null)
+      if (stream == null) {
         try {
           stream = getConnection().getInputStream();
         } catch (IOException e) {
@@ -1902,16 +1896,18 @@ public class HttpRequest {
           else
             stream = new ByteArrayInputStream(new byte[0]);
         }
+      }
     }
 
-    if (!uncompress || !ENCODING_GZIP.equals(contentEncoding()))
+    if (!uncompress || !ENCODING_GZIP.equals(contentEncoding())) {
       return stream;
-    else
+    } else {
       try {
         return new GZIPInputStream(stream);
       } catch (IOException e) {
         throw new HttpRequestException(e);
       }
+    }
   }
 
   /**
@@ -1924,8 +1920,7 @@ public class HttpRequest {
    * @return reader
    * @throws HttpRequestException
    */
-  public InputStreamReader reader(final String charset)
-      throws HttpRequestException {
+  public InputStreamReader reader(final String charset) throws HttpRequestException {
     try {
       return new InputStreamReader(stream(), getValidCharset(charset));
     } catch (UnsupportedEncodingException e) {
@@ -1954,8 +1949,7 @@ public class HttpRequest {
    * @return reader
    * @throws HttpRequestException
    */
-  public BufferedReader bufferedReader(final String charset)
-      throws HttpRequestException {
+  public BufferedReader bufferedReader(final String charset) throws HttpRequestException {
     return new BufferedReader(reader(charset), bufferSize);
   }
 
@@ -2001,8 +1995,7 @@ public class HttpRequest {
    * @return this request
    * @throws HttpRequestException
    */
-  public HttpRequest receive(final OutputStream output)
-      throws HttpRequestException {
+  public HttpRequest receive(final OutputStream output) throws HttpRequestException {
     try {
       return copy(buffer(), output);
     } catch (IOException e) {
@@ -2017,8 +2010,7 @@ public class HttpRequest {
    * @return this request
    * @throws HttpRequestException
    */
-  public HttpRequest receive(final PrintStream output)
-      throws HttpRequestException {
+  public HttpRequest receive(final PrintStream output) throws HttpRequestException {
     return receive((OutputStream) output);
   }
 
@@ -2029,8 +2021,7 @@ public class HttpRequest {
    * @return this request
    * @throws HttpRequestException
    */
-  public HttpRequest receive(final Appendable appendable)
-      throws HttpRequestException {
+  public HttpRequest receive(final Appendable appendable) throws HttpRequestException {
     final BufferedReader reader = bufferedReader();
     return new CloseOperation<HttpRequest>(reader, ignoreCloseExceptions) {
 
@@ -2119,9 +2110,11 @@ public class HttpRequest {
    * @return this request
    */
   public HttpRequest headers(final Map<String, String> headers) {
-    if (!headers.isEmpty())
-      for (Entry<String, String> header : headers.entrySet())
+    if (!headers.isEmpty()) {
+      for (Entry<String, String> header : headers.entrySet()) {
         header(header);
+      }
+    }
     return this;
   }
 
@@ -2179,8 +2172,7 @@ public class HttpRequest {
    * @return date, default value on failures
    * @throws HttpRequestException
    */
-  public long dateHeader(final String name, final long defaultValue)
-      throws HttpRequestException {
+  public long dateHeader(final String name, final long defaultValue) throws HttpRequestException {
     closeOutputQuietly();
     return getConnection().getHeaderFieldDate(name, defaultValue);
   }
@@ -2207,8 +2199,7 @@ public class HttpRequest {
    *         fails
    * @throws HttpRequestException
    */
-  public int intHeader(final String name, final int defaultValue)
-      throws HttpRequestException {
+  public int intHeader(final String name, final int defaultValue) throws HttpRequestException {
     closeOutputQuietly();
     return getConnection().getHeaderFieldInt(name, defaultValue);
   }
@@ -2221,14 +2212,16 @@ public class HttpRequest {
    */
   public String[] headers(final String name) {
     final Map<String, List<String>> headers = headers();
-    if (headers == null || headers.isEmpty())
+    if (headers == null || headers.isEmpty()) {
       return EMPTY_STRINGS;
+    }
 
     final List<String> values = headers.get(name);
-    if (values != null && !values.isEmpty())
+    if (values != null && !values.isEmpty()) {
       return values.toArray(new String[values.size()]);
-    else
+    } else {
       return EMPTY_STRINGS;
+    }
   }
 
   /**
@@ -2262,17 +2255,20 @@ public class HttpRequest {
    * @return parameter value or null if none
    */
   protected Map<String, String> getParams(final String header) {
-    if (header == null || header.length() == 0)
+    if (header == null || header.length() == 0) {
       return Collections.emptyMap();
+    }
 
     final int headerLength = header.length();
     int start = header.indexOf(';') + 1;
-    if (start == 0 || start == headerLength)
+    if (start == 0 || start == headerLength) {
       return Collections.emptyMap();
+    }
 
     int end = header.indexOf(';', start);
-    if (end == -1)
+    if (end == -1) {
       end = headerLength;
+    }
 
     Map<String, String> params = new LinkedHashMap<String, String>();
     while (start < end) {
@@ -2282,19 +2278,21 @@ public class HttpRequest {
         if (name.length() > 0) {
           String value = header.substring(nameEnd + 1, end).trim();
           int length = value.length();
-          if (length != 0)
-            if (length > 2 && '"' == value.charAt(0)
-                && '"' == value.charAt(length - 1))
+          if (length != 0) {
+            if (length > 2 && '"' == value.charAt(0) && '"' == value.charAt(length - 1)) {
               params.put(name, value.substring(1, length - 1));
-            else
+            } else {
               params.put(name, value);
+            }
+          }
         }
       }
 
       start = end + 1;
       end = header.indexOf(';', start);
-      if (end == -1)
+      if (end == -1) {
         end = headerLength;
+      }
     }
 
     return params;
@@ -2308,36 +2306,40 @@ public class HttpRequest {
    * @return parameter value or null if none
    */
   protected String getParam(final String value, final String paramName) {
-    if (value == null || value.length() == 0)
+    if (value == null || value.length() == 0) {
       return null;
+    }
 
     final int length = value.length();
     int start = value.indexOf(';') + 1;
-    if (start == 0 || start == length)
+    if (start == 0 || start == length) {
       return null;
+    }
 
     int end = value.indexOf(';', start);
-    if (end == -1)
+    if (end == -1) {
       end = length;
+    }
 
     while (start < end) {
       int nameEnd = value.indexOf('=', start);
-      if (nameEnd != -1 && nameEnd < end
-          && paramName.equals(value.substring(start, nameEnd).trim())) {
+      if (nameEnd != -1 && nameEnd < end && paramName.equals(value.substring(start, nameEnd).trim())) {
         String paramValue = value.substring(nameEnd + 1, end).trim();
         int valueLength = paramValue.length();
-        if (valueLength != 0)
-          if (valueLength > 2 && '"' == paramValue.charAt(0)
-              && '"' == paramValue.charAt(valueLength - 1))
+        if (valueLength != 0) {
+          if (valueLength > 2 && '"' == paramValue.charAt(0) && '"' == paramValue.charAt(valueLength - 1)) {
             return paramValue.substring(1, valueLength - 1);
-          else
+          } else {
             return paramValue;
+          }
+        }
       }
 
       start = end + 1;
       end = value.indexOf(';', start);
-      if (end == -1)
+      if (end == -1) {
         end = length;
+      }
     }
 
     return null;
