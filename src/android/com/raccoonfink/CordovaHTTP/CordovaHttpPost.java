@@ -1,7 +1,7 @@
 /**
  * A HTTP plugin for Cordova / Phonegap
  */
-package com.synconset;
+package com.raccoonfink.CordovaHTTP;
 
 import java.net.UnknownHostException;
 import java.util.Map;
@@ -15,18 +15,18 @@ import javax.net.ssl.SSLHandshakeException;
 
 import android.util.Log;
 
-import com.github.kevinsawicki.http.HttpRequest;
-import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
+import com.raccoonfink.CordovaHTTP.HttpRequest;
+import com.raccoonfink.CordovaHTTP.HttpRequest.HttpRequestException;
  
-public class CordovaHttpDelete extends CordovaHttp implements Runnable {
-    public CordovaHttpDelete(String urlString, Map<?, ?> params, Map<String, String> headers, CallbackContext callbackContext) {
+public class CordovaHttpPost extends CordovaHttp implements Runnable {
+    public CordovaHttpPost(String urlString, Map<?, ?> params, Map<String, String> headers, CallbackContext callbackContext) {
         super(urlString, params, headers, callbackContext);
     }
     
     @Override
     public void run() {
         try {
-            HttpRequest request = HttpRequest.delete(this.getUrlString());
+            HttpRequest request = HttpRequest.post(this.getUrlString());
             this.setupSecurity(request);
             this.setupTimeouts(request);
             request.acceptCharset(CHARSET);

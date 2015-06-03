@@ -1,7 +1,7 @@
 /**
  * A HTTP plugin for Cordova / Phonegap
  */
-package com.synconset;
+package com.raccoonfink.CordovaHTTP;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -37,7 +37,8 @@ import android.util.Log;
 
 import com.google.android.gms.security.ProviderInstaller;
 
-import com.github.kevinsawicki.http.HttpRequest;
+import com.raccoonfink.CordovaHTTP.HttpRequest;
+import com.raccoonfink.CordovaHTTP.HttpRequest.HttpRequestException;
 
 public class CordovaHttpPlugin extends CordovaPlugin {
     private static final String TAG = "CordovaHTTP";

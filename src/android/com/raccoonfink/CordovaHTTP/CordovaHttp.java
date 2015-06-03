@@ -1,7 +1,7 @@
 /**
  * A HTTP plugin for Cordova / Phonegap
  */
-package com.synconset;
+package com.raccoonfink.CordovaHTTP;
 
 import org.apache.cordova.CallbackContext;
 
@@ -28,8 +28,9 @@ import java.util.Iterator;
 
 import android.util.Log;
 
-import com.github.kevinsawicki.http.HttpRequest;
- 
+import com.raccoonfink.CordovaHTTP.HttpRequest;
+import com.raccoonfink.CordovaHTTP.HttpRequest.HttpRequestException;
+
 public abstract class CordovaHttp {
     protected static final String TAG = "CordovaHTTP";
     protected static final String CHARSET = "UTF-8";

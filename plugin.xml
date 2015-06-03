@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
-  id="com.synconset.cordovaHTTP"
-  version="0.1.4">
+  id="com.raccoonfink.cordova.plugins.http"
+  version="0.1.0">
 
-    <name>SSL Pinning</name>
- 
-    <description>
-        Cordova / Phonegap plugin for communicating with HTTP servers using SSL pinning
-	</description>
+    <name>Cordova HTTP with Permissive SSL and Pinning</name>
+    <description>Cordova / Phonegap plugin for communicating with HTTP servers using SSL pinning.  Based on com.syncoset.cordovaHTTP.</description>
 
     <engines>
         <engine name="cordova" version=">=3.0.0" />
@@ -74,18 +71,18 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="CordovaHttpPlugin">
-                <param name="android-package" value="com.synconset.CordovaHttpPlugin"/>
+                <param name="android-package" value="com.raccoonfink.CordovaHTTP.CordovaHttpPlugin"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttp.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpGet.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpPost.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpPut.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpDelete.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpUpload.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpDownload.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/CordovaHttpPlugin.java" target-dir="src/com/synconset" />
-        <source-file src="src/android/com/synconset/CordovaHTTP/HttpRequest.java" target-dir="src/com/github/kevinsawicki/http" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttp.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpGet.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpPost.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpPut.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpDelete.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpUpload.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpDownload.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpPlugin.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/HttpRequest.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
     </platform>
 </plugin>
