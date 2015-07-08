@@ -58,7 +58,10 @@ public class CordovaHttpPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
-        Log.d(TAG, "execute: action = " + action + ", args = " + args.toString());
+        //Log.d(TAG, "execute: action = " + action + ":");
+        //for (int i=0; i < args.length(); i++) {
+        //    Log.d(TAG, "         " + i + ": " + args.getString(i));
+        //}
         if (action.equals("get")) {
             String urlString = args.getString(0);
             JSONObject params = args.getJSONObject(1);

@@ -888,6 +888,18 @@ public class HttpRequest {
    * @throws HttpRequestException
    */
   public static String encode(final CharSequence url) throws HttpRequestException {
+    final String urlString = url.toString();
+
+    try {
+        final String decoded = java.net.URLDecoder.decode(urlString, "UTF-8");
+        if (!urlString.equals(decoded)) {
+            // URL is already encoded, just return it
+            return urlString;
+        }
+    } catch (final Exception e) {
+        System.err.println("Failed to decode " + urlString + ": " + e.getMessage());
+    }
+
     URL parsed;
     try {
       parsed = new URL(url.toString());
