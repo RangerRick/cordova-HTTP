@@ -52,13 +52,13 @@ public class CordovaHttpPlugin extends CordovaPlugin {
         try {
             ProviderInstaller.installIfNeeded(cordova.getActivity().getApplicationContext());
         } catch (final Exception e) {
-            System.err.println("Failed to install Google Play provider into application context.");
-            e.printStackTrace();
+            Log.e(TAG, "Failed to install Google Play provider into application context.", e);
         }
     }
 
     @Override
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        Log.d(TAG, "execute: action = " + action + ", args = " + args.toString());
         if (action.equals("get")) {
             String urlString = args.getString(0);
             JSONObject params = args.getJSONObject(1);
@@ -89,8 +89,8 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             JSONObject headers = args.getJSONObject(2);
             HashMap<?, ?> paramsMap = this.getMapFromJSONObject(params);
             HashMap<String, String> headersMap = this.addToMap(this.globalHeaders, headers);
-            CordovaHttpDelete delete = new CordovaHttpDelete(urlString, paramsMap, headersMap, callbackContext);
-            cordova.getThreadPool().execute(delete);
+            CordovaHttpDelete del = new CordovaHttpDelete(urlString, paramsMap, headersMap, callbackContext);
+            cordova.getThreadPool().execute(del);
         } else if (action.equals("useBasicAuth")) {
             String username = args.getString(0);
             String password = args.getString(1);
@@ -101,9 +101,9 @@ public class CordovaHttpPlugin extends CordovaPlugin {
                 boolean enable = args.getBoolean(0);
                 this.enableSSLPinning(enable);
                 callbackContext.success();
-            } catch(Exception e) {
-                e.printStackTrace();
-                callbackContext.error("There was an error setting up ssl pinning");
+            } catch(final Exception e) {
+                Log.e(TAG, "Failed to set up SSL pinning.", e);
+                callbackContext.error("Failed to set up SSL pinning.");
             }
         } else if (action.equals("acceptAllCerts")) {
             boolean accept = args.getBoolean(0);
