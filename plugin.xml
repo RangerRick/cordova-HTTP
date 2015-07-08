@@ -75,6 +75,8 @@
             </feature>
         </config-file>
 
+        <framework src="com.google.android.gms:play-services-base:+" />
+
         <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttp.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
         <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpGet.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
         <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpPost.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
