@@ -52,7 +52,7 @@
     bool enable = [[command.arguments objectAtIndex:0] boolValue];
     if (enable) {
         [HttpManager sharedClient].securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
-        [HttpManager sharedClient].securityPolicy.validatesCertificateChain = NO;
+        // [HttpManager sharedClient].securityPolicy.validatesCertificateChain = NO;
     } else {
         [HttpManager sharedClient].securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
     }
