@@ -42,17 +42,23 @@
     NSString *header = [command.arguments objectAtIndex:0];
     NSString *value = [command.arguments objectAtIndex:1];
     
-    [requestSerializer setValue:value forHTTPHeaderField: header];
+    [requestSerializer setValue:value forHTTPHeaderField:header];
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setTimeouts:(CDVInvokedUrlCommand*)command {
+    //long connectionTimeout = [[command.arguments objectAtIndex:0] longValue];
+    long readTimeout = [[command.arguments objectAtIndex:1] longValue];
+
+    requestSerializer.timeoutInterval = (readTimeout / 1000.0);
 }
 
 - (void)enableSSLPinning:(CDVInvokedUrlCommand*)command {
     bool enable = [[command.arguments objectAtIndex:0] boolValue];
     if (enable) {
         [HttpManager sharedClient].securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
-        // [HttpManager sharedClient].securityPolicy.validatesCertificateChain = NO;
     } else {
         [HttpManager sharedClient].securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
     }
