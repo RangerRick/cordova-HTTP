@@ -77,6 +77,13 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)checkRequestTimeout:(NSTimer*)timer {
+  AFHTTPRequestOperation* op = [timer userInfo];
+  if (![op isFinished]) {
+    [op cancel];
+  }
+}
+
 - (void)post:(CDVInvokedUrlCommand*)command {
    HttpManager *manager = [HttpManager sharedClient];
    NSString *url = [command.arguments objectAtIndex:0];
@@ -86,7 +93,7 @@
    
    CordovaHttpPlugin* __weak weakSelf = self;
    manager.responseSerializer = [TextResponseSerializer serializer];
-   [manager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+   AFHTTPRequestOperation* op = [manager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
       [dictionary setObject:responseObject forKey:@"data"];
@@ -99,6 +106,7 @@
       CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
       [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
    }];
+  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)get:(CDVInvokedUrlCommand*)command {
@@ -111,7 +119,7 @@
    CordovaHttpPlugin* __weak weakSelf = self;
    
    manager.responseSerializer = [TextResponseSerializer serializer];
-   [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+   AFHTTPRequestOperation* op = [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
       [dictionary setObject:responseObject forKey:@"data"];
@@ -124,6 +132,7 @@
       CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
       [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
    }];
+  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)put:(CDVInvokedUrlCommand*)command {
@@ -136,7 +145,7 @@
    CordovaHttpPlugin* __weak weakSelf = self;
    
    manager.responseSerializer = [TextResponseSerializer serializer];
-   [manager PUT:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+   AFHTTPRequestOperation* op = [manager PUT:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
       [dictionary setObject:responseObject forKey:@"data"];
@@ -149,6 +158,7 @@
       CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
       [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
    }];
+  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)uploadFile:(CDVInvokedUrlCommand*)command {
@@ -165,7 +175,7 @@
     
     CordovaHttpPlugin* __weak weakSelf = self;
     manager.responseSerializer = [TextResponseSerializer serializer];
-    [manager POST:url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    AFHTTPRequestOperation* op = [manager POST:url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         NSError *error;
         [formData appendPartWithFileURL:fileURL name:name error:&error];
         if (error) {
@@ -188,6 +198,7 @@
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
         [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
+  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 
@@ -202,7 +213,7 @@
     
     CordovaHttpPlugin* __weak weakSelf = self;
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPRequestOperation* op = [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         /*
          *
          * Licensed to the Apache Software Foundation (ASF) under one
@@ -265,6 +276,7 @@
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
         [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
+  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 @end
