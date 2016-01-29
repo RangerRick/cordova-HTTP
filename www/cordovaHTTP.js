@@ -22,6 +22,9 @@ var http = {
     setTimeouts: function(connectionTimeout, readTimeout, success, failure) {
         return exec(success, failure, "CordovaHttpPlugin", "setTimeouts", [connectionTimeout, readTimeout]);
     },
+    head: function(url, params, headers, success, failure) {
+        return exec(success, failure, "CordovaHttpPlugin", "head", [url, params, headers]);
+    },
     post: function(url, params, headers, success, failure) {
         return exec(success, failure, "CordovaHttpPlugin", "post", [url, params, headers]);
     },
@@ -122,6 +125,9 @@ if (typeof angular !== "undefined") {
             },
             setTimeouts: function(connectionTimeout, readTimeout) {
                 return makePromise(http.setTimeouts, [connectionTimeout, readTimeout]);
+            },
+            head: function(url, params, headers) {
+                return makePromise(http.head, [url, params, headers], true);
             },
             post: function(url, params, headers) {
                 return makePromise(http.post, [url, params, headers], true);
