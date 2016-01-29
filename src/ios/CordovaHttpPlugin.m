@@ -77,7 +77,15 @@
     CDVPluginResult* pluginResult = nil;
     bool allow = [[command.arguments objectAtIndex:0] boolValue];
 
-    [HttpManager sharedClient].securityPolicy.allowInvalidCertificates = allow;
+    if (allow) {
+        [HttpManager sharedClient].securityPolicy.allowInvalidCertificates = YES;
+        [HttpManager sharedClient].securityPolicy.validatesDomainName = NO;
+        [HttpManager sharedClient].securityPolicy.validatesCertificateChain = NO;
+    } else {
+        [HttpManager sharedClient].securityPolicy.allowInvalidCertificates = NO;
+        [HttpManager sharedClient].securityPolicy.validatesDomainName = YES;
+        [HttpManager sharedClient].securityPolicy.validatesCertificateChain = YES;
+    }
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
