@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
   id="com.raccoonfink.cordova.plugins.http"
-  version="0.5.0">
+  version="0.5.1">
 
     <name>Cordova HTTP with Permissive SSL and Pinning</name>
     <description>Cordova / Phonegap plugin for communicating with HTTP servers using SSL pinning.  Based on com.syncoset.cordovaHTTP.</description>
@@ -78,6 +78,7 @@
         <framework src="com.google.android.gms:play-services-base:+" />
 
         <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttp.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
+        <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpHead.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
         <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpGet.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
         <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpPost.java" target-dir="src/com/raccoonfink/CordovaHTTP" />
         <source-file src="src/android/com/raccoonfink/CordovaHTTP/CordovaHttpPut.java" target-dir="src/com/raccoonfink/CordovaHTTP" />

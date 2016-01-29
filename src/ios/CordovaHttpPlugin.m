@@ -101,10 +101,9 @@
    CordovaHttpPlugin* __weak weakSelf = self;
 
    manager.responseSerializer = [TextResponseSerializer serializer];
-   AFHTTPRequestOperation* op = [manager HEAD:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+   AFHTTPRequestOperation* op = [manager HEAD:url parameters:parameters success:^(AFHTTPRequestOperation *operation) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:responseObject forKey:@"data"];
       CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
       [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
