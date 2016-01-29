@@ -80,6 +80,7 @@ window.cordovaHTTP = http;
 
 var configureAngular = function() {
 	if (typeof angular !== 'undefined') {
+		console.log('CordovaHTTP: Creating Angular module.');
 		angular.module('cordovaHTTP', []).factory('cordovaHTTP', function($timeout, $q) {
 			function makePromise(fn, args, async) {
 				var deferred = $q.defer();
@@ -152,6 +153,8 @@ var configureAngular = function() {
 			};
 			return cordovaHTTP;
 		});
+	} else {
+		console.log('CordovaHTTP: Angular not found.');
 	}
 };
 
