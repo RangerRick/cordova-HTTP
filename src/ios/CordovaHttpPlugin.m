@@ -64,8 +64,10 @@
 - (void)enableSSLPinning:(CDVInvokedUrlCommand*)command {
     bool enable = [[command.arguments objectAtIndex:0] boolValue];
     if (enable) {
+        NSLog(@"Enabling SSL pinning.");
         [HttpManager sharedClient].securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
     } else {
+        NSLog(@"Disabling SSL pinning.");
         [HttpManager sharedClient].securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
     }
 
@@ -78,10 +80,12 @@
     bool allow = [[command.arguments objectAtIndex:0] boolValue];
 
     if (allow) {
+        NSLog(@"Allowing invalid certificates and disabling domain name validation.");
         [HttpManager sharedClient].securityPolicy.allowInvalidCertificates = YES;
         [HttpManager sharedClient].securityPolicy.validatesDomainName = NO;
         [HttpManager sharedClient].securityPolicy.validatesCertificateChain = NO;
     } else {
+        NSLog(@"Disallowing invalid certificates and enabling domain name validation.");
         [HttpManager sharedClient].securityPolicy.allowInvalidCertificates = NO;
         [HttpManager sharedClient].securityPolicy.validatesDomainName = YES;
         [HttpManager sharedClient].securityPolicy.validatesCertificateChain = YES;
@@ -108,6 +112,7 @@
 
    CordovaHttpPlugin* __weak weakSelf = self;
 
+   NSLog(@"HTTP HEAD %@", url);
    manager.responseSerializer = [TextResponseSerializer serializer];
    AFHTTPRequestOperation* op = [manager HEAD:url parameters:parameters success:^(AFHTTPRequestOperation *operation) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
@@ -136,7 +141,7 @@
 
    [self setRequestHeaders: headers forManager:manager];
 
-   //NSLog(@"posting parameters: %@", parameters);
+   NSLog(@"HTTP POST %@", url);
    CordovaHttpPlugin* __weak weakSelf = self;
    AFHTTPRequestOperation* op = [manager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
@@ -163,6 +168,7 @@
 
    CordovaHttpPlugin* __weak weakSelf = self;
 
+   NSLog(@"HTTP GET %@", url);
    manager.responseSerializer = [TextResponseSerializer serializer];
    AFHTTPRequestOperation* op = [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
@@ -189,6 +195,7 @@
 
    CordovaHttpPlugin* __weak weakSelf = self;
 
+   NSLog(@"HTTP PUT %@", url);
    manager.responseSerializer = [TextResponseSerializer serializer];
    AFHTTPRequestOperation* op = [manager PUT:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
@@ -218,6 +225,7 @@
 
     [self setRequestHeaders: headers];
 
+    NSLog(@"HTTP POST (file) %@", url);
     CordovaHttpPlugin* __weak weakSelf = self;
     manager.responseSerializer = [TextResponseSerializer serializer];
     AFHTTPRequestOperation* op = [manager POST:url parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
@@ -256,6 +264,7 @@
 
     [self setRequestHeaders: headers];
 
+    NSLog(@"HTTP GET (file) %@", url);
     CordovaHttpPlugin* __weak weakSelf = self;
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     AFHTTPRequestOperation* op = [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {

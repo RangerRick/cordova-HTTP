@@ -69,6 +69,7 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             HashMap<?, ?> paramsMap = this.getMapFromJSONObject(params);
             HashMap<String, String> headersMap = this.addToMap(this.globalHeaders, headers);
             CordovaHttpGet get = new CordovaHttpGet(urlString, paramsMap, headersMap, callbackContext);
+            Log.d(TAG, "HTTP GET " + urlString);
             cordova.getThreadPool().execute(get);
         } else if (action.equals("head")) {
             String urlString = args.getString(0);
@@ -77,6 +78,7 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             HashMap<?, ?> paramsMap = this.getMapFromJSONObject(params);
             HashMap<String, String> headersMap = this.addToMap(this.globalHeaders, headers);
             CordovaHttpHead head = new CordovaHttpHead(urlString, paramsMap, headersMap, callbackContext);
+            Log.d(TAG, "HTTP HEAD " + urlString);
             cordova.getThreadPool().execute(head);
         } else if (action.equals("post")) {
             String urlString = args.getString(0);
@@ -85,6 +87,7 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             HashMap<?, ?> paramsMap = this.getMapFromJSONObject(params);
             HashMap<String, String> headersMap = this.addToMap(this.globalHeaders, headers);
             CordovaHttpPost post = new CordovaHttpPost(urlString, paramsMap, headersMap, callbackContext);
+            Log.d(TAG, "HTTP POST " + urlString);
             cordova.getThreadPool().execute(post);
         } else if (action.equals("put")) {
             String urlString = args.getString(0);
@@ -93,6 +96,7 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             HashMap<?, ?> paramsMap = this.getMapFromJSONObject(params);
             HashMap<String, String> headersMap = this.addToMap(this.globalHeaders, headers);
             CordovaHttpPut put = new CordovaHttpPut(urlString, paramsMap, headersMap, callbackContext);
+            Log.d(TAG, "HTTP PUT " + urlString);
             cordova.getThreadPool().execute(put);
         } else if (action.equals("delete")) {
             String urlString = args.getString(0);
@@ -101,6 +105,7 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             HashMap<?, ?> paramsMap = this.getMapFromJSONObject(params);
             HashMap<String, String> headersMap = this.addToMap(this.globalHeaders, headers);
             CordovaHttpDelete del = new CordovaHttpDelete(urlString, paramsMap, headersMap, callbackContext);
+            Log.d(TAG, "HTTP DELETE " + urlString);
             cordova.getThreadPool().execute(del);
         } else if (action.equals("useBasicAuth")) {
             String username = args.getString(0);
@@ -138,6 +143,7 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             String filePath = args.getString(3);
             String name = args.getString(4);
             CordovaHttpUpload upload = new CordovaHttpUpload(urlString, paramsMap, headersMap, callbackContext, filePath, name);
+            Log.d(TAG, "HTTP POST (file) " + urlString);
             cordova.getThreadPool().execute(upload);
         } else if (action.equals("downloadFile")) {
             String urlString = args.getString(0);
@@ -147,6 +153,7 @@ public class CordovaHttpPlugin extends CordovaPlugin {
             HashMap<String, String> headersMap = this.addToMap(this.globalHeaders, headers);
             String filePath = args.getString(3);
             CordovaHttpDownload download = new CordovaHttpDownload(urlString, paramsMap, headersMap, callbackContext, filePath);
+            Log.d(TAG, "HTTP GET (file) " + urlString);
             cordova.getThreadPool().execute(download);
         } else {
             return false;
