@@ -213,6 +213,33 @@
   [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
+- (void)delete:(CDVInvokedUrlCommand*)command {
+   HttpManager *manager = [HttpManager sharedClient];
+   NSString *url = [command.arguments objectAtIndex:0];
+   NSDictionary *parameters = [command.arguments objectAtIndex:1];
+   NSDictionary *headers = [command.arguments objectAtIndex:2];
+   [self setRequestHeaders: headers];
+
+   CordovaHttpPlugin* __weak weakSelf = self;
+
+   NSLog(@"HTTP DELETE %@", url);
+   manager.responseSerializer = [TextResponseSerializer serializer];
+   AFHTTPRequestOperation* op = [manager DELETE:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+      [dictionary setObject:responseObject forKey:@"data"];
+      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+      [dictionary setObject:[error localizedDescription] forKey:@"error"];
+      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
+      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+   }];
+  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+}
+
 - (void)uploadFile:(CDVInvokedUrlCommand*)command {
     HttpManager *manager = [HttpManager sharedClient];
     NSString *url = [command.arguments objectAtIndex:0];
