@@ -17,12 +17,16 @@ import android.util.Log;
 
 import com.raccoonfink.CordovaHTTP.HttpRequest;
 import com.raccoonfink.CordovaHTTP.HttpRequest.HttpRequestException;
- 
+
 public class CordovaHttpPost extends CordovaHttp implements Runnable {
-    public CordovaHttpPost(String urlString, Map<?, ?> params, Map<String, String> headers, CallbackContext callbackContext) {
+    public CordovaHttpPost(final String urlString, final Map<?, ?> params, final Map<String, String> headers, final CallbackContext callbackContext) {
         super(urlString, params, headers, callbackContext);
     }
-    
+
+    public CordovaHttpPost(final String urlString, final Map<?, ?> params, final Map<String, String> headers, final CallbackContext callbackContext, final Object data) {
+        super(urlString, params, headers, callbackContext, data);
+    }
+
     @Override
     public void run() {
         try {
@@ -30,8 +34,16 @@ public class CordovaHttpPost extends CordovaHttp implements Runnable {
             this.setupSecurity(request);
             this.setupTimeouts(request);
             request.acceptCharset(CHARSET);
-            request.headers(this.getHeaders());
-            request.form(this.getParams());
+
+            final Map<String,String> headers = this.getHeaders();
+            request.headers(headers);
+            if (headers.containsKey("Content-Type") && "application/json".equals(headers.get("Content-Type"))) {
+                final String body = this.getData() == null? "" : this.getData().toString();
+                System.err.println("sending body: " + body);
+                request.send(body);
+            } else {
+                request.form(this.getParams());
+            }
             int code = request.code();
             String body = request.body(CHARSET);
             JSONObject response = new JSONObject();
