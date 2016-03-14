@@ -39,7 +39,6 @@ public class CordovaHttpPost extends CordovaHttp implements Runnable {
             request.headers(headers);
             if (headers.containsKey("Content-Type") && "application/json".equals(headers.get("Content-Type"))) {
                 final String body = this.getData() == null? "" : this.getData().toString();
-                System.err.println("sending body: " + body);
                 request.send(body);
             } else {
                 request.form(this.getParams());
