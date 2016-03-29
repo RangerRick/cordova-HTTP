@@ -22,6 +22,7 @@
 - (void)setRequestHeaders:(NSDictionary*)headers {
   AFHTTPRequestOperationManager *manager = [HttpManager sharedClient];
   manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+  [manager.requestSerializer setHTTPShouldHandleCookies:NO];
   [self setRequestHeaders:headers forManager:manager];
 }
 
@@ -137,6 +138,7 @@
    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
 
    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+  [manager.requestSerializer setHTTPShouldHandleCookies:NO];
    manager.responseSerializer = [AFJSONResponseSerializer serializer];
 
    [self setRequestHeaders: headers forManager:manager];
