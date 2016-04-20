@@ -20,10 +20,10 @@
 }
 
 - (void)setRequestHeaders:(NSDictionary*)headers {
-  AFHTTPRequestOperationManager *manager = [HttpManager sharedClient];
-  manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-  [manager.requestSerializer setHTTPShouldHandleCookies:NO];
-  [self setRequestHeaders:headers forManager:manager];
+    AFHTTPRequestOperationManager *manager = [HttpManager sharedClient];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    [manager.requestSerializer setHTTPShouldHandleCookies:NO];
+    [self setRequestHeaders:headers forManager:manager];
 }
 
 - (void)setRequestHeaders:(NSDictionary*)headers forManager:(AFHTTPRequestOperationManager*)manager {
@@ -97,149 +97,149 @@
 }
 
 - (void)checkRequestTimeout:(NSTimer*)timer {
-  AFHTTPRequestOperation* op = [timer userInfo];
-  if (![op isFinished]) {
-    NSLog(@"Request has timed out: %@ %@", [[op request] HTTPMethod],[[op request] URL]);
-    [op cancel];
-  }
+    AFHTTPRequestOperation* op = [timer userInfo];
+    if (![op isFinished]) {
+        NSLog(@"Request has timed out: %@ %@", [[op request] HTTPMethod],[[op request] URL]);
+        [op cancel];
+    }
 }
 
 - (void)head:(CDVInvokedUrlCommand*)command {
-   HttpManager *manager = [HttpManager sharedClient];
-   NSString *url = [command.arguments objectAtIndex:0];
-   NSDictionary *parameters = [command.arguments objectAtIndex:1];
-   NSDictionary *headers = [command.arguments objectAtIndex:2];
-   [self setRequestHeaders: headers];
+    HttpManager *manager = [HttpManager sharedClient];
+    NSString *url = [command.arguments objectAtIndex:0];
+    NSDictionary *parameters = [command.arguments objectAtIndex:1];
+    NSDictionary *headers = [command.arguments objectAtIndex:2];
+    [self setRequestHeaders: headers];
 
-   CordovaHttpPlugin* __weak weakSelf = self;
+    CordovaHttpPlugin* __weak weakSelf = self;
 
-   NSLog(@"HTTP HEAD %@", url);
-   manager.responseSerializer = [TextResponseSerializer serializer];
-   AFHTTPRequestOperation* op = [manager HEAD:url parameters:parameters success:^(AFHTTPRequestOperation *operation) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:[error localizedDescription] forKey:@"error"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   }];
-  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+    NSLog(@"HTTP HEAD %@", url);
+    manager.responseSerializer = [TextResponseSerializer serializer];
+    AFHTTPRequestOperation* op = [manager HEAD:url parameters:parameters success:^(AFHTTPRequestOperation *operation) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:[error localizedDescription] forKey:@"error"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+    [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)post:(CDVInvokedUrlCommand*)command {
-   NSString *url = [command.arguments objectAtIndex:0];
-   NSDictionary *parameters = [command.arguments objectAtIndex:1];
-   NSDictionary *headers = [command.arguments objectAtIndex:2];
+    NSString *url = [command.arguments objectAtIndex:0];
+    NSDictionary *parameters = [command.arguments objectAtIndex:1];
+    NSDictionary *headers = [command.arguments objectAtIndex:2];
 
-   AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
 
-   manager.requestSerializer = [AFJSONRequestSerializer serializer];
-  [manager.requestSerializer setHTTPShouldHandleCookies:NO];
-   manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    [manager.requestSerializer setHTTPShouldHandleCookies:NO];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
 
-   [self setRequestHeaders: headers forManager:manager];
+    [self setRequestHeaders: headers forManager:manager];
 
-   NSLog(@"HTTP POST %@", url);
-   CordovaHttpPlugin* __weak weakSelf = self;
-   AFHTTPRequestOperation* op = [manager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-     [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:responseObject forKey:@"data"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:[error localizedDescription] forKey:@"error"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   }];
-  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+    NSLog(@"HTTP POST %@", url);
+    CordovaHttpPlugin* __weak weakSelf = self;
+    AFHTTPRequestOperation* op = [manager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:responseObject forKey:@"data"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:[error localizedDescription] forKey:@"error"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+    [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)get:(CDVInvokedUrlCommand*)command {
-   HttpManager *manager = [HttpManager sharedClient];
-   NSString *url = [command.arguments objectAtIndex:0];
-   NSDictionary *parameters = [command.arguments objectAtIndex:1];
-   NSDictionary *headers = [command.arguments objectAtIndex:2];
-   [self setRequestHeaders: headers];
+    HttpManager *manager = [HttpManager sharedClient];
+    NSString *url = [command.arguments objectAtIndex:0];
+    NSDictionary *parameters = [command.arguments objectAtIndex:1];
+    NSDictionary *headers = [command.arguments objectAtIndex:2];
+    [self setRequestHeaders: headers];
 
-   CordovaHttpPlugin* __weak weakSelf = self;
+    CordovaHttpPlugin* __weak weakSelf = self;
 
-   NSLog(@"HTTP GET %@", url);
-   manager.responseSerializer = [TextResponseSerializer serializer];
-   AFHTTPRequestOperation* op = [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:responseObject forKey:@"data"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:[error localizedDescription] forKey:@"error"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   }];
-  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+    NSLog(@"HTTP GET %@", url);
+    manager.responseSerializer = [TextResponseSerializer serializer];
+    AFHTTPRequestOperation* op = [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:responseObject forKey:@"data"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:[error localizedDescription] forKey:@"error"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+    [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)put:(CDVInvokedUrlCommand*)command {
-   HttpManager *manager = [HttpManager sharedClient];
-   NSString *url = [command.arguments objectAtIndex:0];
-   NSDictionary *parameters = [command.arguments objectAtIndex:1];
-   NSDictionary *headers = [command.arguments objectAtIndex:2];
-   [self setRequestHeaders: headers];
+    HttpManager *manager = [HttpManager sharedClient];
+    NSString *url = [command.arguments objectAtIndex:0];
+    NSDictionary *parameters = [command.arguments objectAtIndex:1];
+    NSDictionary *headers = [command.arguments objectAtIndex:2];
+    [self setRequestHeaders: headers];
 
-   CordovaHttpPlugin* __weak weakSelf = self;
+    CordovaHttpPlugin* __weak weakSelf = self;
 
-   NSLog(@"HTTP PUT %@", url);
-   manager.responseSerializer = [TextResponseSerializer serializer];
-   AFHTTPRequestOperation* op = [manager PUT:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:responseObject forKey:@"data"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:[error localizedDescription] forKey:@"error"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   }];
-  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+    NSLog(@"HTTP PUT %@", url);
+    manager.responseSerializer = [TextResponseSerializer serializer];
+    AFHTTPRequestOperation* op = [manager PUT:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:responseObject forKey:@"data"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:[error localizedDescription] forKey:@"error"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+    [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)delete:(CDVInvokedUrlCommand*)command {
-   HttpManager *manager = [HttpManager sharedClient];
-   NSString *url = [command.arguments objectAtIndex:0];
-   NSDictionary *parameters = [command.arguments objectAtIndex:1];
-   NSDictionary *headers = [command.arguments objectAtIndex:2];
-   [self setRequestHeaders: headers];
+    HttpManager *manager = [HttpManager sharedClient];
+    NSString *url = [command.arguments objectAtIndex:0];
+    NSDictionary *parameters = [command.arguments objectAtIndex:1];
+    NSDictionary *headers = [command.arguments objectAtIndex:2];
+    [self setRequestHeaders: headers];
 
-   CordovaHttpPlugin* __weak weakSelf = self;
+    CordovaHttpPlugin* __weak weakSelf = self;
 
-   NSLog(@"HTTP DELETE %@", url);
-   manager.responseSerializer = [TextResponseSerializer serializer];
-   AFHTTPRequestOperation* op = [manager DELETE:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:responseObject forKey:@"data"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-      NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-      [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:[error localizedDescription] forKey:@"error"];
-      CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
-      [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-   }];
-  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+    NSLog(@"HTTP DELETE %@", url);
+    manager.responseSerializer = [TextResponseSerializer serializer];
+    AFHTTPRequestOperation* op = [manager DELETE:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:responseObject forKey:@"data"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        [dictionary setObject:[NSNumber numberWithLong:operation.response.statusCode] forKey:@"status"];
+        [dictionary setObject:[error localizedDescription] forKey:@"error"];
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
+        [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
+    [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 - (void)uploadFile:(CDVInvokedUrlCommand*)command {
@@ -280,7 +280,7 @@
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
         [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
-  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+    [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 
@@ -359,7 +359,7 @@
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:dictionary];
         [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
-  [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
+    [NSTimer scheduledTimerWithTimeInterval:requestSerializer.timeoutInterval target:weakSelf selector:@selector(checkRequestTimeout:) userInfo:op repeats:false];
 }
 
 @end
