@@ -85,12 +85,12 @@
         NSLog(@"Allowing invalid certificates and disabling domain name validation.");
         [HttpManager sharedClient].securityPolicy.allowInvalidCertificates = YES;
         [HttpManager sharedClient].securityPolicy.validatesDomainName = NO;
-        [HttpManager sharedClient].securityPolicy.validatesCertificateChain = NO;
+        //[HttpManager sharedClient].securityPolicy.validatesCertificateChain = NO;
     } else {
         NSLog(@"Disallowing invalid certificates and enabling domain name validation.");
         [HttpManager sharedClient].securityPolicy.allowInvalidCertificates = NO;
         [HttpManager sharedClient].securityPolicy.validatesDomainName = YES;
-        [HttpManager sharedClient].securityPolicy.validatesCertificateChain = YES;
+        //[HttpManager sharedClient].securityPolicy.validatesCertificateChain = YES;
     }
 
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
