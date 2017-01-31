@@ -112,7 +112,7 @@
     NSDictionary *headers = [command.arguments objectAtIndex:2];
 
     [self.commandDelegate runInBackground:^{
-        NSLog(@"HTTP HEAD %@", url);
+        NSLog(@"HTTP HEAD %@: parameters: %@", url, parameters);
 
         HttpManager *manager = [HttpManager manager];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -143,7 +143,7 @@
     NSDictionary *headers = [command.arguments objectAtIndex:2];
 
     [self.commandDelegate runInBackground:^{
-        NSLog(@"HTTP POST %@", url);
+        NSLog(@"HTTP POST %@: parameters=%@", url, parameters);
 
         HttpManager *manager = [HttpManager manager];
         manager.requestSerializer = [AFJSONRequestSerializer serializer];
@@ -175,7 +175,7 @@
     NSDictionary *headers = [command.arguments objectAtIndex:2];
 
     [self.commandDelegate runInBackground:^{
-        NSLog(@"HTTP GET %@", url);
+        NSLog(@"HTTP GET %@: parameters=%@", url, parameters);
 
         HttpManager *manager = [HttpManager manager];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -207,7 +207,7 @@
     NSDictionary *headers = [command.arguments objectAtIndex:2];
 
     [self.commandDelegate runInBackground:^{
-        NSLog(@"HTTP PUT %@", url);
+        NSLog(@"HTTP PUT %@ parameters: %@", url, parameters);
 
         HttpManager *manager = [HttpManager manager];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -239,7 +239,7 @@
     NSDictionary *headers = [command.arguments objectAtIndex:2];
 
     [self.commandDelegate runInBackground:^{
-        NSLog(@"HTTP DELETE %@", url);
+        NSLog(@"HTTP DELETE %@: parameters: %@", url, parameters);
 
         HttpManager *manager = [HttpManager manager];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -274,7 +274,7 @@
     NSURL *fileURL = [NSURL fileURLWithPath: filePath];
 
     [self.commandDelegate runInBackground:^{
-        NSLog(@"HTTP POST (file) %@", url);
+        NSLog(@"HTTP POST (file) %@: parameters: %@", url, parameters);
 
         HttpManager *manager = [HttpManager manager];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -318,7 +318,7 @@
     NSString *filePath = [command.arguments objectAtIndex: 3];
 
     [self.commandDelegate runInBackground:^{
-        NSLog(@"HTTP GET (file) %@", url);
+        NSLog(@"HTTP GET (file) %@: parameters: %@", url, parameters);
 
         HttpManager *manager = [HttpManager manager];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
