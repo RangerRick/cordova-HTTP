@@ -1,0 +1,47 @@
+{
+  "name": "com.raccoonfink.cordova.plugins.http",
+  "version": "0.6.10",
+  "description": "Cordova / Phonegap plugin for communicating with HTTP servers using permissive SSL.  Based on com.syncoset.cordovaHTTP.",
+  "cordova": {
+    "id": "com.raccoonfink.cordova.plugins.http",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RangerRick/cordova-HTTP.git"
+  },
+  "keywords": [
+    "cordova",
+    "device",
+    "ecosystem:cordova",
+    "cordova-ios",
+    "cordova-android",
+    "ssl",
+    "tls"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "author": "RangerRick",
+  "contributors": [
+    "devgeeks",
+    "EddyVerbruggen",
+    "mbektchiev",
+    "denisbabineau",
+    "andrey-tsaplin",
+    "pvsaikrishna",
+    "cvillerm",
+    "hideov",
+    "Mobisys"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "cordova": "7.0.1"
+  }
+}
